@@ -4,7 +4,6 @@ namespace Merge_Sort_Parallel
 {
     class MergeSort
     {
-        // Driver code
         public static void Main(String[] args)
         {
             Random random = new Random();
@@ -13,7 +12,6 @@ namespace Merge_Sort_Parallel
 
             do
             {
-                
                 Console.Write($"\nPodaj ilość liczb do wygenerowania losowo: \n> ");
                 do
                 {
@@ -49,72 +47,83 @@ namespace Merge_Sort_Parallel
             } while (!exit.Equals("n"));
         }
 
-        void merge(int[] arr, int l, int m, int r)
+        public void merge(int[] array, int left, int middle, int right)
         {
-            int n1 = m - l + 1;
-            int n2 = r - m;
+            // Znajdz wielkość dwóch tablic do scalenia
+            int n1 = middle - left + 1; // Wielkość I tablicy
+            int n2 = right - middle; // Wielkość II tablicy
 
-            int[] L = new int[n1];
-            int[] R = new int[n2];
+            // Tymczasowe tablice
+            int[] leftArr = new int[n1];
+            int[] rightArr = new int[n2];
             int i, j;
 
+            // Kopiowanie liczb do tablic
             for (i = 0; i < n1; ++i)
             {
-                L[i] = arr[l + i];
+                leftArr[i] = array[left + i];
             }
-
             for (j = 0; j < n2; ++j)
             {
-                R[j] = arr[m + 1 + j];
+                rightArr[j] = array[middle + 1 + j];
             }
 
+            // Początkowe indeksy tablic
             i = 0;
             j = 0;
 
-            int k = l;
+            // Indeks początku do przejrzenia tablic
+            int k = left;
             while (i < n1 && j < n2)
             {
-                if (L[i] <= R[j])
+                if (leftArr[i] <= rightArr[j])
                 {
-                    arr[k] = L[i];
+                    array[k] = leftArr[i];
                     i++;
                 }
                 else
                 {
-                    arr[k] = R[j];
+                    array[k] = rightArr[j];
                     j++;
                 }
                 k++;
             }
 
+            // Skopiuj pozostałe liczby lewej tablicy jeśli jakieś pozostały
             while (i < n1)
             {
-                arr[k] = L[i];
+                array[k] = leftArr[i];
                 i++;
                 k++;
             }
 
+            // Skopiuj pozostałe liczby prawej tablicy jeśli jakieś pozostały
             while (j < n2)
             {
-                arr[k] = R[j];
+                array[k] = rightArr[j];
                 j++;
                 k++;
             }
         }
 
-        void sort(int[] arr, int l, int r)
+        // Sortowanie ( rekurencja )
+        public void sort(int[] array, int left, int right)
         {
-            if (l < r)
+            if (left < right) // Ogon rekurencji
             {
-                int m = l + (r - l) / 2;
+                // Znajdź środkowy indeks
+                int middle = left + (right - left) / 2;
 
-                sort(arr, l, m);
-                sort(arr, m + 1, r);
+                // Posortuj pierwszą i drugą połowe tablicy ( podziel )
+                sort(array, left, middle);
+                sort(array, middle + 1, right);
 
-                merge(arr, l, m, r);
+                // Scal posortowane tablice
+                merge(array, left, middle, right);
             }
         }
 
+        // Drukuj tablice
         static void printArray(int[] arr)
         {
             int n = arr.Length;
