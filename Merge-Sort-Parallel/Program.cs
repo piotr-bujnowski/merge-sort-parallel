@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Merge_Sort_Parallel
 {
@@ -27,20 +28,46 @@ namespace Merge_Sort_Parallel
                 }
                 while (numSize <= 0);
 
-                int[] arr = new int[numSize];
-                for (int i = 0; i < arr.Length; i++)
+                int[] arr1 = new int[numSize];
+                for (int i = 0; i < arr1.Length; i++)
                 {
-                    arr[i] = random.Next(100);
+                    arr1[i] = random.Next(100);
                 }
 
-                Console.WriteLine("\nWygenerowane tablica:");
-                printArray(arr);
+                int[] arr2 = new int[numSize];
+                Array.Copy(arr1, arr2, arr1.Length);
+                Console.Write("\nCzy chcesz wydrukować wygenerowane tablice? [y/n]: \n>");
+                String generatedArrChoice = Console.ReadLine();
 
-                MergeSort ob = new MergeSort();
-                ob.sort(arr, 0, arr.Length - 1);
+                if (generatedArrChoice.ToLower().Equals("y"))
+                {
+                    Console.WriteLine("\nWygenerowana tablica:");
+                    printArray(arr1);
+                }
 
-                Console.WriteLine("\nPosortowane tablica: ");
-                printArray(arr);
+                // Sortowanie asynchroniczne ( równoległe )
+                var watchParallel = System.Diagnostics.Stopwatch.StartNew(); // Timer dla rónoległego
+                MergeSort.parallelSort(arr1, 4);
+                watchParallel.Stop();
+                var elapsedTimeParallel = watchParallel.ElapsedMilliseconds;
+
+                // Sortowanie synchroniczne
+                var watchSync = System.Diagnostics.Stopwatch.StartNew(); // Timer dla synchronicznego
+                MergeSort.sort(arr2, 0, arr2.Length - 1);
+                watchSync.Stop();
+                var elapsedTimeSync = watchSync.ElapsedMilliseconds;
+
+                Console.Write("\nCzy chcesz wyświetlić posortowaną tablice? [y/n]: \n>");
+                String sortedArrChoice = Console.ReadLine();
+
+                if (sortedArrChoice.ToLower().Equals("y"))
+                {
+                    Console.WriteLine("\nPosortowana tablica:");
+                    printArray(arr1);
+                }
+
+                Console.WriteLine($"\nCzas sortowania Rónoległego: {elapsedTimeParallel} ms");
+                Console.WriteLine($"Czas sortowania Synchronicznego: {elapsedTimeSync} ms");
 
                 Console.Write("\nCzy chcesz powtórzyć sortowanie? [y/n]: \n> ");
                 exit = Console.ReadLine();
